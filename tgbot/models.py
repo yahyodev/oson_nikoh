@@ -76,3 +76,11 @@ class ViewedProfile(models.Model):
 
     class Meta:
         unique_together = ("viewer", "profile")
+
+
+class Complaint(TimeBasedModel):
+    complainer = models.ForeignKey(User, related_name="complainer", on_delete=models.CASCADE)
+    accused = models.ForeignKey(User, related_name="accused", on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ("complainer", "accused")

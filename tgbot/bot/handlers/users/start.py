@@ -37,5 +37,7 @@ async def register_user(message: types.Message, state: FSMContext) -> None:
 
     if not status:
         await state.set_state(RegData.start)
+    else:
+        await state.clear()
 
     await message.answer(text, reply_markup=markup)

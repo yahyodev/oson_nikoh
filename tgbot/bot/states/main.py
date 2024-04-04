@@ -23,3 +23,14 @@ class ChangeData(StatesGroup):
     start = State()
     biography = State()
     photo = State()
+
+
+class SearchQues(StatesGroup):
+    profile_options = State()
+    viewing_ques = State()
+
+
+class Filters(StatesGroup):
+    using = State()
+    min = State()
+    max = State()

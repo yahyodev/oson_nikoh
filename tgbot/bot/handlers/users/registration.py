@@ -14,7 +14,7 @@ from tgbot.bot.utils.db_api import db_commands
 from tgbot.bot.utils.datas import regions
 from tgbot.bot.functions.common import update_user_data
 
-from tgbot.bot.states import RegData
+from tgbot.bot.states import RegData, SearchQues
 from tgbot.bot.keyboards.reply import request_contact
 from tgbot.bot.keyboards.builders import form_btn
 from tgbot.bot.keyboards.builders import get_regions
@@ -198,6 +198,7 @@ async def photo(message: Message, state: FSMContext) -> None:
     await update_user_data(telegram_id=message.from_user.id, status=True)
     await display_profile(message)
     await profile_choices(message)
+    await state.set_state(SearchQues.profile_options)
 
 
 @router.message(RegData.photo, ~F.photo)

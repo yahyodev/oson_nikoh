@@ -1,1 +1,1 @@
-from .main import RegData, ChangeData
+from .main import RegData, ChangeData, SearchQues

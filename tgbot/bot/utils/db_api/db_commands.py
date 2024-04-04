@@ -1,3 +1,5 @@
+from typing import List
+
 from asgiref.sync import (
     sync_to_async,
 )
@@ -13,7 +15,7 @@ from django.db.models.expressions import (
 
 from tgbot.models import (
     User,
-    ViewedProfile
+    ViewedProfile, Complaint
 )
 
 
@@ -45,23 +47,50 @@ def add_user(telegram_id, full_name, username):
 
 @sync_to_async
 def search_users(
-        need_sex,
-        need_age_min,
-        need_age_max,
-        need_location,
-        age,
-        offset: int,
-        limit: int,
-):
+        telegram_id: int,
+        sex: str,
+        age: int = None,
+        location: str = None,
+        need_age_min: int = None,
+        need_age_max: int = None,
+        offset: int = None,
+        limit: int = None,
+) -> List[int]:
     query = (
-            Q(is_banned=False)
-            & Q(sex=need_partner_sex)
-            & (
-                    (Q(age__gte=need_age_min) & Q(age__lte=need_age_max))
-                    | (Q(age__gte=need_age_min + 1) & Q(age__lte=need_age_max + 1))
-            )
-            & Q(city=user_need_city)
-            & Q(status=True)
+        Q(status=True)
     )
-    users = User.objects.filter(query).values()
-    return users
+    if location:
+        query &= Q(location=location)
+    age_query = Q(active=True)
+
+    if age:
+        age_query &= Q(age__gte=(age if sex == 'ayol' else age - 6))
+        age_query &= Q(age__lte=(age + 6 if sex == 'ayol' else age))
+
+    if need_age_min and need_age_max:
+        age_query |= Q(age__gte=need_age_min) & Q(age__lte=need_age_max)
+    elif need_age_min:
+        age_query |= Q(age__gte=need_age_min)
+    elif need_age_max:
+        age_query |= Q(age__lte=need_age_max)
+    query = query & age_query
+    users = (User.objects
+             .exclude(sex=sex)
+             .exclude(telegram_id=telegram_id)
+             .filter(query)
+             .values_list('telegram_id', flat=True))
+
+    return list(users)
+
+
+@sync_to_async
+def get_user_profiles(user: User):
+    users = ViewedProfile.objects.filter(viewer__id=user.id)
+    return list(users.values_list('profile__telegram_id', flat=True))
+
+
+@sync_to_async
+def create_complaint(complainer_id: int, accused_id: int) -> None:
+    complainer = User.objects.get(telegram_id=complainer_id)
+    accused = User.objects.get(telegram_id=accused_id)
+    Complaint.objects.get_or_create(complainer=complainer, accused=accused)

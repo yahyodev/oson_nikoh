@@ -1,3 +1,4 @@
+import asyncio
 from typing import Union
 
 from aiogram import Bot
@@ -9,6 +10,7 @@ from tgbot.bot.utils.db_api import db_commands
 async def display_profile(obj: Update,
                           markup: Union[InlineKeyboardMarkup, ReplyKeyboardMarkup] = None) -> None:
     """Function for displaying the user profile."""
+    await asyncio.sleep(1)
     if isinstance(obj, CallbackQuery):
         obj = obj.message.chat
     user = await db_commands.select_user(obj.chat.id)
@@ -44,9 +46,12 @@ async def display_profile(obj: Update,
 
 
 async def profile_choices(obj: Union[CallbackQuery, Message]):
+    await asyncio.sleep(1)
     text = "1. Anketalarni ko'rish\n" \
            "2. Anketamni butunlay yoki qisman o'zgartirish\n" \
-           "3. Anketamni olib tashlash\n"
+           "3. Anketamni olib tashlash\n" \
+           "4. Mening anketam\n" \
+           "5. Yoshga talablar"
 
     if isinstance(obj, CallbackQuery):
         obj = obj.message
@@ -56,6 +61,8 @@ async def profile_choices(obj: Union[CallbackQuery, Message]):
             KeyboardButton(text="1🚀"),
             KeyboardButton(text="2"),
             KeyboardButton(text="3"),
+            KeyboardButton(text="4"),
+            KeyboardButton(text="5")
         ],
     ]
 
