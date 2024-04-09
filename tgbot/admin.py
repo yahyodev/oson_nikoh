@@ -1,5 +1,5 @@
 from django.contrib import admin
-from tgbot.models import User as TelegramUser, Complaint
+from tgbot.models import User as TelegramUser, Complaint, NecessaryLink
 
 
 @admin.register(TelegramUser)
@@ -11,3 +11,8 @@ class UserAdmin(admin.ModelAdmin):
 @admin.register(Complaint)
 class ComplaintAdmin(admin.ModelAdmin):
     list_display = ("id",)
+
+
+@admin.register(NecessaryLink)
+class NecessaryLinkAdmin(admin.ModelAdmin):
+    list_display = ("id", "link", "title")

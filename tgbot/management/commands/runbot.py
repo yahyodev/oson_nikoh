@@ -26,9 +26,11 @@ def setup_handlers(dispatcher: Dispatcher) -> None:
 def setup_middlewares(dispatcher: Dispatcher, bot: Bot) -> None:
     """MIDDLEWARE"""
     from tgbot.bot.middlewares.throttling import ThrottlingMiddleware
+    from tgbot.bot.middlewares.necessary_link import CheckSubscriberMiddleware
 
     # Spamdan himoya qilish uchun klassik ichki o'rta dastur. So'rovlar orasidagi asosiy vaqtlar 0,5 soniya
     dispatcher.message.middleware(ThrottlingMiddleware(slow_mode_delay=0.5))
+    dispatcher.message.middleware(CheckSubscriberMiddleware())
 
 
 def setup_filters(dispatcher: Dispatcher) -> None:

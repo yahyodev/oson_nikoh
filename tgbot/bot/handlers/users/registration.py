@@ -19,6 +19,8 @@ from tgbot.bot.keyboards.reply import request_contact
 from tgbot.bot.keyboards.builders import form_btn
 from tgbot.bot.keyboards.builders import get_regions
 
+from tgbot.bot.loader import logger
+
 router = Router()
 
 
@@ -126,7 +128,7 @@ async def height(message: Message, state: FSMContext) -> None:
     await update_user_data(telegram_id=message.from_user.id,
                            height=int(message.text))
     await state.set_state(RegData.weight)
-    await message.answer("Vazningizni yozing kgda(masalan, 80)")
+    await message.answer("Vazningizni yozing kgda(masalan, 60)")
 
 
 @router.message(RegData.height, ~F.text.isdigit())
@@ -183,11 +185,15 @@ async def occupation(message: Message, state: FSMContext) -> None:
 async def biography(message: Message, state: FSMContext) -> None:
     await update_user_data(telegram_id=message.from_user.id,
                            biography=message.text)
-    await state.set_state(RegData.min_age)
 
     user = await db_commands.select_user(message.from_user.id)
-    partner = 'kuyov' if user.sex == 'ayol' else 'kelin'
-    await message.answer(f"{partner.capitalize()} uchun eng kichik yoshni ayting(masalan 18)")
+    if user:
+        partner = 'kuyov' if user.sex == 'ayol' else 'kelin'
+    else:
+        partner = 'jufti halolingiz'
+    await message.answer(f"{partner.capitalize()} uchun eng kichik yoshni ayting(masalan, 18)")
+
+    await state.set_state(RegData.min_age)
 
 
 @router.message(RegData.min_age, F.text.isdigit())
@@ -200,6 +206,14 @@ async def min_age(message: Message, state: FSMContext) -> None:
     else:
         await update_user_data(telegram_id=message.from_user.id,
                                need_partner_age_min=int(message.text))
+
+        user = await db_commands.select_user(message.from_user.id)
+        if user:
+            partner = 'kuyov' if user.sex == 'ayol' else 'kelin'
+        else:
+            partner = 'jufti halolingiz'
+        await message.answer(f"{partner.capitalize()} uchun eng katta yoshni ayting(masalan, 58)")
+
         await state.set_state(RegData.max_age)
 
 

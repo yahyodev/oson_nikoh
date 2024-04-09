@@ -31,7 +31,7 @@ async def get_next_user(
         need_age_max=user.need_partner_age_max
     )
 
-    if len(user_filter) < 5:
+    if len(user_filter) < 30:
         user_filter = await db_commands.search_users(
             sex=user.sex,
             age=user.age,
@@ -40,22 +40,23 @@ async def get_next_user(
             need_age_max=user.need_partner_age_max
         )
 
-    if len(user_filter) < 5:
+    if len(user_filter) < 30:
         user_filter = await db_commands.search_users(
             sex=user.sex,
             telegram_id=user.telegram_id,
-            need_age_min=user.need_partner_age_min,
-            need_age_max=user.need_partner_age_max
         )
 
     return user_filter
 
 
-async def rand_user_list(telegram_id) -> int:
+async def rand_user_list(telegram_id) -> Union[int, None]:
     user_list = await get_next_user(telegram_id)
-    random_user_list = [random.choice(user_list) for _ in range(len(user_list))]
-    random_user = secrets.choice(random_user_list)
-    return random_user
+    try:
+        random_user_list = [random.choice(user_list) for _ in range(len(user_list))]
+        random_user = secrets.choice(random_user_list)
+        return random_user
+    except IndexError:
+        return None
 
 
 async def create_que(telegram_id: int, obj: Union[CallbackQuery, Message]):

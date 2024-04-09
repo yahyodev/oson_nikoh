@@ -96,3 +96,16 @@ class Like(models.Model):
 
     class Meta:
         unique_together = ('viewer', 'profile')
+
+
+class NecessaryLink(TimeBasedModel):
+    class Meta:
+        verbose_name = "Majburiy havola"
+        verbose_name_plural = "Majburiy havolalar"
+
+    id = models.AutoField(primary_key=True)
+    link = models.URLField(verbose_name="Majburiy havola")
+    telegram_link_id = models.BigIntegerField(verbose_name="Kanal/chatning id'si")
+    title = models.CharField(
+        verbose_name="Tugma nomi, emoji ishlatsa ham bo'ladi", max_length=50
+    )

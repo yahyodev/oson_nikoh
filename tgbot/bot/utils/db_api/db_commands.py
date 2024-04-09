@@ -17,7 +17,7 @@ from tgbot.models import (
     User,
     ViewedProfile,
     Complaint,
-    Like
+    Like, NecessaryLink
 )
 
 
@@ -66,15 +66,15 @@ def search_users(
     age_query = Q(active=True)
 
     if age:
-        age_query &= Q(age__gte=(age if sex == 'ayol' else age - 6))
-        age_query &= Q(age__lte=(age + 6 if sex == 'ayol' else age))
+        age_query &= Q(age__gte=(age - 1 if sex == 'ayol' else age - 6))
+        age_query &= Q(age__lte=(age + 6 if sex == 'ayol' else age + 1))
 
     if need_age_min and need_age_max:
-        age_query |= Q(age__gte=need_age_min) & Q(age__lte=need_age_max)
+        age_query |= Q(age__gte=need_age_min - 2) & Q(age__lte=need_age_max + 2)
     elif need_age_min:
-        age_query |= Q(age__gte=need_age_min)
+        age_query |= Q(age__gte=need_age_min - 2)
     elif need_age_max:
-        age_query |= Q(age__lte=need_age_max)
+        age_query |= Q(age__lte=need_age_max + 2)
     query = query & age_query
     users = (User.objects
              .exclude(sex=sex)
@@ -111,3 +111,9 @@ def get_like(profile_id: int) -> int:
     if likes:
         return likes.first().viewer
     return 0
+
+
+@sync_to_async
+def select_all_links() -> list:
+    links = NecessaryLink.objects.all().values()
+    return list(links)

@@ -27,9 +27,17 @@ async def find_ques(obj: Union[CallbackQuery, Message], state: FSMContext) -> No
     await update_user_data(obj.from_user.id, username=obj.from_user.username)
     await state.set_state(SearchQues.viewing_ques)
     await update_user_data(obj.from_user.id, active=True)
+
+    if isinstance(obj, CallbackQuery):
+        obj = obj.message
+
     user = await rand_user_list(obj.from_user.id)
-    await state.update_data(last_profile_user_id=user)
-    await create_que(user, obj)
+    if user is None:
+        await obj.answer("Uzr hozirchalik sizga mos odam topilmadi,\n"
+                         "Adminga yozib ko'ring")
+    else:
+        await state.update_data(last_profile_user_id=user)
+        await create_que(user, obj)
 
 
 @router.message(SearchQues.viewing_ques, F.text == "👍")
@@ -39,15 +47,23 @@ async def like_que(message: Message, state: FSMContext, bot: Bot) -> None:
     await send_profile(message, data, bot)
 
     user = await rand_user_list(message.from_user.id)
-    await state.update_data(last_profile_user_id=user)
-    await create_que(user, message)
+    if user is None:
+        await message.answer("Uzr hozirchalik sizga mos odam topilmadi,\n"
+                             "Adminga yozib ko'ring")
+    else:
+        await state.update_data(last_profile_user_id=user)
+        await create_que(user, message)
 
 
 @router.message(SearchQues.viewing_ques, F.text == "👎")
 async def dislike_que(message: Message, state: FSMContext) -> None:
     user = await rand_user_list(message.from_user.id)
-    await state.update_data(last_profile_user_id=user)
-    await create_que(user, message)
+    if user is None:
+        await message.answer("Uzr hozirchalik sizga mos odam topilmadi,\n"
+                             "Adminga yozib ko'ring")
+    else:
+        await state.update_data(last_profile_user_id=user)
+        await create_que(user, message)
 
 
 @router.message(SearchQues.viewing_ques, F.text == "shikoyat")
@@ -58,8 +74,12 @@ async def complaint_que(message: Message, state: FSMContext) -> None:
         await db_commands.create_complaint(message.from_user.id, data)
 
     user = await rand_user_list(message.from_user.id)
-    await state.update_data(last_profile_user_id=user)
-    await create_que(user, message)
+    if user is None:
+        await message.answer("Uzr hozirchalik sizga mos odam topilmadi,\n"
+                             "Adminga yozib ko'ring")
+    else:
+        await state.update_data(last_profile_user_id=user)
+        await create_que(user, message)
 
 
 @router.message(SearchQues.viewing_ques, F.text == "🔙")
