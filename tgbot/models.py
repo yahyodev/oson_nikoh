@@ -64,12 +64,14 @@ class User(TimeBasedModel):
         "self", through="ViewedProfile", symmetrical=False
     )
 
+    notification_sent = models.BooleanField(default=False)
+
     def __str__(self):
         return f"№{self.id} ({self.telegram_id}) - {self.name}"
 
 
 class ViewedProfile(models.Model):
-    viewer = models.ForeignKey(User, related_name="viewer", on_delete=models.CASCADE)
+    viewer = models.ForeignKey(User, related_name="viewed_profiles_as_viewer", on_delete=models.CASCADE)
     profile = models.ForeignKey(User, related_name="profile", on_delete=models.CASCADE)
     liked = models.BooleanField(default=False, verbose_name="liked")
     viewed_at = models.DateTimeField(auto_now_add=True)
@@ -84,3 +86,13 @@ class Complaint(TimeBasedModel):
 
     class Meta:
         unique_together = ("complainer", "accused")
+
+
+class Like(models.Model):
+    viewer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='viewer')
+    profile = models.ForeignKey(User, on_delete=models.CASCADE, related_name='like_profile')
+    liked_at = models.DateTimeField(auto_now_add=True)
+    mutual = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ('viewer', 'profile')

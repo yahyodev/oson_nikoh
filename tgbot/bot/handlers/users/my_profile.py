@@ -22,8 +22,7 @@ router = Router()
 
 @router.message(F.text == '2', ChangeData.start)
 async def change_que_completely(message: Message, state: FSMContext):
-    await message.answer("Boshlash uchun ismingizni ayting",
-                         reply_markup=form_btn(message.from_user.first_name))
+    await message.answer("Boshlash uchun ismingizni ayting")
     await state.set_state(RegData.name)
 
 
@@ -78,6 +77,7 @@ async def photo(message: Message) -> None:
 @router.message(SearchQues.profile_options, F.text == '4')
 @router.message(Command('my_profile'))
 @router.callback_query(F.data == 'my_profile')
+@router.message(F.text == '🔙')
 async def my_profile(obj: Union[Message, CallbackQuery], state: FSMContext):
     if isinstance(obj, CallbackQuery):
         obj = obj.message
@@ -119,61 +119,61 @@ async def deactivate_que(message: Message, state: FSMContext):
                          reply_markup=form_btn("Anketalarni ko'rish"))
 
 
-@router.message(SearchQues.profile_options, F.text == '5')
-async def filters(message: Message, state: FSMContext):
-    await state.set_state(Filters.using)
-    await message.answer("1. Minimum yoshni o'zgartirish\n"
-                         "2. Maksimum yoshni o'zgaritirsh",
-                         reply_markup=form_btn(["1", "2"]))
+# @router.message(SearchQues.profile_options, F.text == '5')
+# async def filters(message: Message, state: FSMContext):
+#     await state.set_state(Filters.using)
+#     await message.answer("1. Minimum yoshni o'zgartirish\n"
+#                          "2. Maksimum yoshni o'zgaritirsh",
+#                          reply_markup=form_btn(["1", "2"]))
 
 
-@router.callback_query(F.data == 'filters')
-async def filters(call: CallbackQuery, state: FSMContext):
-    await state.set_state(Filters.using)
-    await call.message.answer("1. Minimum yoshni o'zgartirish\n"
-                              "2. Maksimum yoshni o'zgaritirsh",
-                              reply_markup=form_btn(["1", "2"]))
+# @router.callback_query(F.data == 'filters')
+# async def filters(call: CallbackQuery, state: FSMContext):
+#     await state.set_state(Filters.using)
+#     await call.message.answer("1. Minimum yoshni o'zgartirish\n"
+#                               "2. Maksimum yoshni o'zgaritirsh",
+#                               reply_markup=form_btn(["1", "2"]))
 
-
-@router.message(Filters.using, F.text == "1")
-async def filters(message: Message, state: FSMContext):
-    await state.set_state(Filters.min)
-    await message.answer("Turmush ortog'iz uchun minimum yoshni yozing(masalan, 18)")
-
-
-@router.message(Filters.min, F.text.isdigit())
-async def filters(message: Message, state: FSMContext):
-    age = int(message.text)
-    await update_user_data(message.from_user.id, need_partner_age_min=age)
-    await state.clear()
-    await message.answer(f"✅Minimum yosh {message.text}ga o'zgartirildi")
-    await asyncio.sleep(2)
-    await profile_choices(message)
-    await state.set_state(SearchQues.profile_options)
-
-
-@router.message(Filters.min, ~F.text.isdigit())
-async def filters(message: Message, state: FSMContext):
-    await message.answer("Faqat raqamlar kiriting")
-
-
-@router.message(Filters.using, F.text == "2")
-async def filters(message: Message, state: FSMContext):
-    await state.set_state(Filters.max)
-    await message.answer("Turmush ortog'iz uchun maksimum yoshni yozing(masalan, 58)")
-
-
-@router.message(Filters.max, F.text.isdigit())
-async def filters(message: Message, state: FSMContext):
-    age = int(message.text)
-    await update_user_data(message.from_user.id, need_partner_age_max=age)
-    await state.clear()
-    await message.answer(f"✅Maksimum yosh {message.text}ga o'zgartirildi")
-    await asyncio.sleep(2)
-    await profile_choices(message)
-    await state.set_state(SearchQues.profile_options)
-
-
-@router.message(Filters.max, ~F.text.isdigit())
-async def filters(message: Message, state: FSMContext):
-    await message.answer("Faqat raqamlar kiriting")
+#
+# @router.message(Filters.using, F.text == "1")
+# async def filters(message: Message, state: FSMContext):
+#     await state.set_state(Filters.min)
+#     await message.answer("Turmush ortog'iz uchun minimum yoshni yozing(masalan, 18)")
+#
+#
+# @router.message(Filters.min, F.text.isdigit())
+# async def filters(message: Message, state: FSMContext):
+#     age = int(message.text)
+#     await update_user_data(message.from_user.id, need_partner_age_min=age)
+#     await state.clear()
+#     await message.answer(f"✅Minimum yosh {message.text}ga o'zgartirildi")
+#     await asyncio.sleep(0.1)
+#     await profile_choices(message)
+#     await state.set_state(SearchQues.profile_options)
+#
+#
+# @router.message(Filters.min, ~F.text.isdigit())
+# async def filters(message: Message, state: FSMContext):
+#     await message.answer("Faqat raqamlar kiriting")
+#
+#
+# @router.message(Filters.using, F.text == "2")
+# async def filters(message: Message, state: FSMContext):
+#     await state.set_state(Filters.max)
+#     await message.answer("Turmush ortog'iz uchun maksimum yoshni yozing(masalan, 58)")
+#
+#
+# @router.message(Filters.max, F.text.isdigit())
+# async def filters(message: Message, state: FSMContext):
+#     age = int(message.text)
+#     await update_user_data(message.from_user.id, need_partner_age_max=age)
+#     await state.clear()
+#     await message.answer(f"✅Maksimum yosh {message.text}ga o'zgartirildi")
+#     await asyncio.sleep(0.1)
+#     await profile_choices(message)
+#     await state.set_state(SearchQues.profile_options)
+#
+#
+# @router.message(Filters.max, ~F.text.isdigit())
+# async def filters(message: Message, state: FSMContext):
+#     await message.answer("Faqat raqamlar kiriting")

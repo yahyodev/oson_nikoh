@@ -16,6 +16,8 @@ class RegData(StatesGroup):
     education = State()
     occupation = State()
     biography = State()
+    min_age = State()
+    max_age = State()
     photo = State()
 
 
@@ -34,3 +36,4 @@ class Filters(StatesGroup):
     using = State()
     min = State()
     max = State()
+

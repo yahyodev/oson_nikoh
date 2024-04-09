@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 
 from asgiref.sync import (
     sync_to_async,
@@ -15,7 +15,9 @@ from django.db.models.expressions import (
 
 from tgbot.models import (
     User,
-    ViewedProfile, Complaint
+    ViewedProfile,
+    Complaint,
+    Like
 )
 
 
@@ -94,3 +96,18 @@ def create_complaint(complainer_id: int, accused_id: int) -> None:
     complainer = User.objects.get(telegram_id=complainer_id)
     accused = User.objects.get(telegram_id=accused_id)
     Complaint.objects.get_or_create(complainer=complainer, accused=accused)
+
+
+@sync_to_async
+def create_like(viewer_id: int, profile_id: int) -> None:
+    viewer = User.objects.get(telegram_id=viewer_id)
+    profile = User.objects.get(telegram_id=profile_id)
+    Like.objects.get_or_create(viewer=viewer, profile=profile)
+
+
+@sync_to_async
+def get_like(profile_id: int) -> int:
+    likes = Like.objects.filter(profile_id=profile_id)
+    if likes:
+        return likes.first().viewer
+    return 0

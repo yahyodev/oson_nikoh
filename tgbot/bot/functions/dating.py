@@ -67,10 +67,12 @@ async def create_que(telegram_id: int, obj: Union[CallbackQuery, Message]):
                          "👨‍👩‍👧‍👦Oilaviy holati: {marital_status}\n\n" \
                          "{edu_emoji}Ma'lumoti: {education}\n\n" \
                          "💵Kasbi: {occupation}\n\n" \
+                         "{partner}ni yosh chegarasi: {min_age}-{max_age}\n\n" \
                          "💢O'zi haqida: {biography}"
 
     sex_emoji = "🤵‍♂" if user.sex == 'erkak' else '👰‍♀'
     edu_emoji = "👨‍🎓" if user.sex == 'erkak' else '👩‍🎓'
+    partner = "kelin" if user.sex == "erkak" else "kuyov"
     user_info = user_info_template.format(
         sex_emoji=sex_emoji,
         edu_emoji=edu_emoji,
@@ -83,14 +85,17 @@ async def create_que(telegram_id: int, obj: Union[CallbackQuery, Message]):
         marital_status=user.marital_status,
         education=user.education,
         occupation=user.occupation,
-        biography=user.biography
+        biography=user.biography,
+        partner=partner.capitalize(),
+        min_age=user.need_partner_age_min,
+        max_age=user.need_partner_age_max
     )
 
     kb = [
         [
             KeyboardButton(text="👍"),
             KeyboardButton(text="👎"),
-            KeyboardButton(text="🚫"),
+            KeyboardButton(text="shikoyat"),
             KeyboardButton(text="🔙")
         ],
     ]

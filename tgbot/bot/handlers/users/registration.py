@@ -176,17 +176,58 @@ async def occupation(message: Message, state: FSMContext) -> None:
     await update_user_data(telegram_id=message.from_user.id,
                            occupation=message.text)
     await state.set_state(RegData.biography)
-    await message.answer("O'zingiz haqida bo'lgan boshqa ma'lumotlarni ayting\n"
-                         "xohlasangiz talablaringizni ham yozing")
+    await message.answer("O'zingiz va talablaringiz haqida yozing")
 
 
 @router.message(RegData.biography, F.text)
 async def biography(message: Message, state: FSMContext) -> None:
     await update_user_data(telegram_id=message.from_user.id,
                            biography=message.text)
-    await state.set_state(RegData.photo)
-    await message.answer("Endi foto yuboring, birovnikini qo'ymang,\n"
-                         "buni boshqa foydalanuvchilar ko'ra oladi")
+    await state.set_state(RegData.min_age)
+
+    user = await db_commands.select_user(message.from_user.id)
+    partner = 'kuyov' if user.sex == 'ayol' else 'kelin'
+    await message.answer(f"{partner.capitalize()} uchun eng kichik yoshni ayting(masalan 18)")
+
+
+@router.message(RegData.min_age, F.text.isdigit())
+async def min_age(message: Message, state: FSMContext) -> None:
+    if int(message.text) < 18:
+        await message.answer("Bu qonunga xilof")
+    elif int(message.text) > 99:
+        await message.answer("Tu'gilgan yilini emas, yoshini kiriting\n"
+                             "Masalan, 18")
+    else:
+        await update_user_data(telegram_id=message.from_user.id,
+                               need_partner_age_min=int(message.text))
+        await state.set_state(RegData.max_age)
+
+
+@router.message(RegData.min_age, ~F.text.isdigit())
+async def min_age(message: Message, state: FSMContext) -> None:
+    await message.answer("Faqat raqamlar kiriting,\n"
+                         "Masalan, 18")
+
+
+@router.message(RegData.max_age, F.text.isdigit())
+async def max_age(message: Message, state: FSMContext) -> None:
+    if int(message.text) < 18:
+        await message.answer("Bu qonunga xilof")
+    elif int(message.text) > 99:
+        await message.answer("Tu'gilgan yilini emas, yoshini kiriting\n"
+                             "Masalan, 58")
+    else:
+        await update_user_data(telegram_id=message.from_user.id,
+                               need_partner_age_max=int(message.text))
+        await state.set_state(RegData.photo)
+        await message.answer("Endi foto yuboring, birovnikini qo'ymang,\n"
+                             "buni boshqa foydalanuvchilar ko'ra oladi")
+
+
+@router.message(RegData.max_age, ~F.text.isdigit())
+async def max_age(message: Message, state: FSMContext) -> None:
+    await message.answer("Faqat raqamlar kiriting,\n"
+                         "Masalan, 58")
 
 
 @router.message(RegData.photo, F.photo)
