@@ -44,15 +44,55 @@ async def find_ques(obj: Union[CallbackQuery, Message], state: FSMContext) -> No
 async def like_que(message: Message, state: FSMContext, bot: Bot) -> None:
     data = await state.get_data()
     data = data.get('last_profile_user_id')
-    await send_profile(message, data, bot)
 
-    user = await rand_user_list(message.from_user.id)
-    if user is None:
+    user = await db_commands.select_user(int(data))
+    if user and user.is_fake:
+        user_info_template = ("💸Bizga sodiq bo'lganiz uchun "
+                              "bu bonus akkaunt\n\n"
+                              "{sex_emoji}{name}, {age}, {location}, \n\n" \
+                              "📊{height} sm - {weight} kg\n\n" \
+                              "🇺🇳Millati: {ethnicity}\n\n" \
+                              "👨‍👩‍👧‍👦Oilaviy holati: {marital_status}\n\n" \
+                              "{edu_emoji}Ma'lumoti: {education}\n\n" \
+                              "💵Kasbi: {occupation}\n\n" \
+                              "💢O'zi haqida: {biography}\n\n" \
+                              "🔗Akkaunt uchun <a href='tg://user?id={liked_id}'>{username}</a>")
+
+        sex_emoji = "🤵‍♂" if user.sex == 'erkak' else '👰‍♀'
+        edu_emoji = "👨‍🎓" if user.sex == 'erkak' else '👩‍🎓'
+        user_info = user_info_template.format(
+            sex_emoji=sex_emoji,
+            edu_emoji=edu_emoji,
+            name=user.name,
+            age=user.age,
+            location=user.location,
+            height=user.height,
+            weight=user.weight,
+            ethnicity=user.ethnicity,
+            marital_status=user.marital_status,
+            education=user.education,
+            occupation=user.occupation,
+            biography=user.biography,
+            liked_id=user.telegram_id,
+            username=('bu yerga bosing' if not user.username else '@' + user.username)
+        )
+        if not user.photo_id:
+            await message.answer(user_info)
+        else:
+            await message.answer_photo(caption=user_info,
+                                       photo=user.photo_id)
+
+        await asyncio.sleep(3.5)
+    else:
+        await send_profile(message, data, bot)
+
+    rand_user = await rand_user_list(message.from_user.id)
+    if rand_user is None:
         await message.answer("Uzr hozirchalik sizga mos odam topilmadi,\n"
                              "Adminga yozib ko'ring")
     else:
-        await state.update_data(last_profile_user_id=user)
-        await create_que(user, message)
+        await state.update_data(last_profile_user_id=rand_user)
+        await create_que(rand_user, message)
 
 
 @router.message(SearchQues.viewing_ques, F.text == "👎")

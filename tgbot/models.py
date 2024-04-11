@@ -28,7 +28,7 @@ class User(TimeBasedModel):
         unique=True, default=1, verbose_name="telegram id"
     )
     status = models.BooleanField(default=False, verbose_name='status')
-    is_fake = models.BooleanField(default=False, verbose_name='is fake', null=True, blank=True)
+    is_fake = models.BooleanField(default=False, verbose_name='is fake')
     active = models.BooleanField(default=True, verbose_name='active')
     full_name = models.CharField(max_length=255, verbose_name="full name", null=True, blank=True)
 

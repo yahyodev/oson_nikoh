@@ -23,7 +23,7 @@ async def echo(message: types.Message, state: FSMContext):
     user = await db_commands.select_user(message.from_user.id)
     if user and user.status:
         await state.set_state(SearchQues.profile_options)
-        await message.answer("Nimadir xato ketdi...")
+        await message.answer("Qayta urinib ko'ring...")
         await profile_choices(message)
     else:
         markup = await start_keyboard(message)
