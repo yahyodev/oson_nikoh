@@ -30,8 +30,8 @@ class CheckSubscriberMiddleware(BaseMiddleware):
                 if await check_subscription(link["telegram_link_id"]):
                     subscribed_links.add(link["telegram_link_id"])
             text, markup = (
-                "Вы подписались не на все каналы! Чтобы продолжить пользоваться ботом, "
-                "подпишитесь! Ссылки ниже: "
+                "Siz barcha kanallarga obuna bo'lmagansiz! Botdan foydalanishni davom ettirish uchun "
+                "obuna bo'ling! Quyidagi havolalar: "
             ), await necessary_links_keyboard(
                 telegram_id=user_id,
                 links_db=links_db,
@@ -43,7 +43,7 @@ class CheckSubscriberMiddleware(BaseMiddleware):
         except TelegramAPIError as e:
             # Handle API errors
             print(f"Error checking subscriber status: {e}")
-            await obj.answer("Failed to check your subscription status. Please try again later.")
+            # await obj.answer("Failed to check your subscription status. Please try again later.")
             return await handler(obj, data)
             # fix this
 
