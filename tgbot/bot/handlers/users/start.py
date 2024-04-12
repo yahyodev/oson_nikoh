@@ -34,7 +34,10 @@ async def register_user(message: types.Message, state: FSMContext) -> None:
                                    )
     else:
         status = status or (await db_commands.select_user(message.from_user.id)).status
-
+        await update_user_data(telegram_id=telegram_id,
+                               full_name=message.from_user.full_name,
+                               username=message.from_user.username,
+                               is_fake=False)
     if not status:
         await state.set_state(RegData.start)
     else:
