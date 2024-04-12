@@ -82,7 +82,7 @@ async def like_que(message: Message, state: FSMContext, bot: Bot) -> None:
             await message.answer_photo(caption=user_info,
                                        photo=user.photo_id)
 
-        await asyncio.sleep(5)
+        await asyncio.sleep(2.5)
     else:
         await send_profile(message, data, bot)
 
