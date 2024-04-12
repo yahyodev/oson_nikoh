@@ -21,12 +21,10 @@ DB_NAME = env.str("DB_NAME")
 DB_HOST = env.str("DB_HOST")
 DB_PORT = env.str("DB_PORT")
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['194.26.232.42', '0.0.0.0',
+                 'localhost']
 
 # Application definition
 
@@ -70,7 +68,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'src.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
@@ -103,18 +100,16 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'Asia/Tashkent'
+TIME_ZONE = 'Europe/London'
 
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
