@@ -12,7 +12,7 @@ class CheckSubscriberMiddleware(BaseMiddleware):
     def __init__(self):
         super().__init__()
 
-    async def __call__(self,  handler, obj: Union[Message, CallbackQuery], data=None):
+    async def __call__(self, handler, obj: Union[Message, CallbackQuery], data=None):
         if isinstance(obj, CallbackQuery):
             obj = obj.message
         user_id = obj.from_user.id
@@ -44,6 +44,7 @@ class CheckSubscriberMiddleware(BaseMiddleware):
             # Handle API errors
             print(f"Error checking subscriber status: {e}")
             await obj.answer("Failed to check your subscription status. Please try again later.")
-            return
+            return await handler(obj, data)
+            # fix this
 
         return await handler(obj, data)
