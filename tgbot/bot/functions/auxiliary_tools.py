@@ -21,10 +21,11 @@ async def display_profile(obj: Update,
                          "👨‍👩‍👧‍👦Oilaviy holati: {marital_status}\n\n" \
                          "{edu_emoji}Ma'lumoti: {education}\n\n" \
                          "💵Kasbi: {occupation}\n\n" \
-                         "{partner}ni yosh chegarasi: {min_age}-{max_age}\n\n" \
+                         "{sex_emoji_2}{partner}ni yosh chegarasi: {min_age}-{max_age}\n\n" \
                          "💢O'zi haqida va talablari: {biography}"
 
     sex_emoji = "🤵‍♂" if user.sex == 'erkak' else '👰‍♀'
+    sex_emoji_2 = '👰‍♀' if user.sex == 'ayol' else "🤵‍♂"
     edu_emoji = "👨‍🎓" if user.sex == 'erkak' else '👩‍🎓'
     partner = "kelin" if user.sex == 'erkak' else 'kuyov'
 
@@ -43,7 +44,8 @@ async def display_profile(obj: Update,
         biography=user.biography,
         partner=partner.capitalize(),
         min_age=user.need_partner_age_min,
-        max_age=user.need_partner_age_max
+        max_age=user.need_partner_age_max,
+        sex_emoji_2=sex_emoji_2
     )
 
     await obj.answer_photo(
@@ -91,11 +93,12 @@ async def send_profile(obj: Message, telegram_id: int, bot: Bot) -> None:
                           "👨‍👩‍👧‍👦Oilaviy holati: {marital_status}\n\n" \
                           "{edu_emoji}Ma'lumoti: {education}\n\n" \
                           "💵Kasbi: {occupation}\n\n" \
-                          "{partner}ni yosh chegarasi: {min_age}-{max_age}\n\n" \
+                          "{sex_emoji_2}{partner}ni yosh chegarasi: {min_age}-{max_age}\n\n" \
                           "💢O'zi haqida va talablari: {biography}")
 
     sex_emoji = "🤵‍♂" if user.sex == 'erkak' else '👰‍♀'
     edu_emoji = "👨‍🎓" if user.sex == 'erkak' else '👩‍🎓'
+    sex_emoji_2 = '👰‍♀' if user.sex == 'ayol' else "🤵‍♂"
     partner = "kelin" if user.sex == 'erkak' else 'kuyov'
     user_info = user_info_template.format(
         sex_emoji=sex_emoji,
@@ -112,7 +115,8 @@ async def send_profile(obj: Message, telegram_id: int, bot: Bot) -> None:
         biography=user.biography,
         partner=partner.capitalize(),
         min_age=user.need_partner_age_min,
-        max_age=user.need_partner_age_max
+        max_age=user.need_partner_age_max,
+        sex_emoji_2=sex_emoji_2
     )
 
     markup = InlineKeyboardMarkup(inline_keyboard=[], one_time_keyboard=True)
