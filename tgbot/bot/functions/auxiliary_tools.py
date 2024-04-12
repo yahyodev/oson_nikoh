@@ -25,7 +25,7 @@ async def display_profile(obj: Update,
                          "💢O'zi haqida va talablari: {biography}"
 
     sex_emoji = "🤵‍♂" if user.sex == 'erkak' else '👰‍♀'
-    sex_emoji_2 = '👰‍♀' if user.sex == 'ayol' else "🤵‍♂"
+    sex_emoji_2 = '🤵‍♂' if user.sex == 'ayol' else "👰‍♀"
     edu_emoji = "👨‍🎓" if user.sex == 'erkak' else '👩‍🎓'
     partner = "kelin" if user.sex == 'erkak' else 'kuyov'
 
@@ -98,7 +98,7 @@ async def send_profile(obj: Message, telegram_id: int, bot: Bot) -> None:
 
     sex_emoji = "🤵‍♂" if user.sex == 'erkak' else '👰‍♀'
     edu_emoji = "👨‍🎓" if user.sex == 'erkak' else '👩‍🎓'
-    sex_emoji_2 = '👰‍♀' if user.sex == 'ayol' else "🤵‍♂"
+    sex_emoji_2 = '🤵‍♂' if user.sex == 'ayol' else "👰‍♀"
     partner = "kelin" if user.sex == 'erkak' else 'kuyov'
     user_info = user_info_template.format(
         sex_emoji=sex_emoji,

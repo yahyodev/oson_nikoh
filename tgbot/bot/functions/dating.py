@@ -72,7 +72,7 @@ async def create_que(telegram_id: int, obj: Union[CallbackQuery, Message]):
                          "💢O'zi haqida: {biography}"
 
     sex_emoji = "🤵‍♂" if user.sex == 'erkak' else '👰‍♀'
-    sex_emoji_2 = '👰‍♀' if user.sex == 'ayol' else "🤵‍♂"
+    sex_emoji_2 = '🤵‍♂' if user.sex == 'ayol' else "👰‍♀"
     edu_emoji = "👨‍🎓" if user.sex == 'erkak' else '👩‍🎓'
     partner = "kelin" if user.sex == "erkak" else "kuyov"
     user_info = user_info_template.format(
