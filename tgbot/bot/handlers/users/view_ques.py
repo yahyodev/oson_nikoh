@@ -77,12 +77,12 @@ async def like_que(message: Message, state: FSMContext, bot: Bot) -> None:
             username=('bu yerga bosing' if not user.username else '@' + user.username)
         )
         if not user.photo_id:
-            await message.answer(user_info)
+            await message.answer(user_info[:1023])
         else:
-            await message.answer_photo(caption=user_info,
+            await message.answer_photo(caption=user_info[:1023],
                                        photo=user.photo_id)
 
-        await asyncio.sleep(2.5)
+        await asyncio.sleep(3)
     else:
         await send_profile(message, data, bot)
 
@@ -163,7 +163,7 @@ async def profile_liked(call: CallbackQuery, state: FSMContext, bot: Bot) -> Non
         username=('bu yerga bosing' if not user.username else '@' + user.username)
     )
 
-    await call.message.edit_caption(caption=user_info, reply_markup=None)
+    await call.message.edit_caption(caption=user_info[:1023], reply_markup=None)
     await start_texting(call, liker_id, liked_id, bot)
 
 

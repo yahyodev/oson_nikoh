@@ -49,7 +49,7 @@ async def display_profile(obj: Update,
     )
 
     await obj.answer_photo(
-        caption=user_info, photo=user.photo_id
+        caption=user_info[:1023], photo=user.photo_id
     )
 
 
@@ -131,7 +131,7 @@ async def send_profile(obj: Message, telegram_id: int, bot: Bot) -> None:
     markup.inline_keyboard.append([dislike])
     # print('hiiii', telegram_id, user.telegram_id)
     await bot.send_photo(chat_id=telegram_id,
-                         caption=user_info,
+                         caption=user_info[:1023],
                          photo=user.photo_id,
                          reply_markup=markup
                          )
@@ -181,6 +181,6 @@ async def start_texting(call: CallbackQuery, liker_id: int, liked_id: int, bot: 
     )
 
     await bot.send_photo(photo=user.photo_id,
-                         caption=user_info,
+                         caption=user_info[:1023],
                          chat_id=liker_id
                          )

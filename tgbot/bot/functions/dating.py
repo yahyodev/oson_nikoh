@@ -112,5 +112,5 @@ async def create_que(telegram_id: int, obj: Union[CallbackQuery, Message]):
     if isinstance(obj, CallbackQuery):
         obj = obj.message
     await obj.answer_photo(
-        caption=user_info, photo=user.photo_id, reply_markup=keyboard
+        caption=user_info[:1023], photo=user.photo_id, reply_markup=keyboard
     )
