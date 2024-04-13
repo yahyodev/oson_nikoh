@@ -82,7 +82,7 @@ async def profile_choices(obj: Union[CallbackQuery, Message]):
 
 async def send_profile(obj: Message, telegram_id: int, bot: Bot) -> None:
     """Function for displaying the user profile."""
-    await asyncio.sleep(0.1)
+    # await asyncio.sleep(0.1)
 
     user = await db_commands.select_user(obj.from_user.id)
 
