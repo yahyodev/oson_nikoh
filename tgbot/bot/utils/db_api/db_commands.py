@@ -17,7 +17,7 @@ from tgbot.models import (
     User,
     ViewedProfile,
     Complaint,
-    Like, NecessaryLink
+    Like, NecessaryLink, Referral
 )
 
 
