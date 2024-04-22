@@ -18,6 +18,10 @@ class TimeBasedModel(models.Model):
         abstract = True
 
 
+class Referral(TimeBasedModel):
+    link = models.CharField(verbose_name='link', unique=True)
+
+
 class User(TimeBasedModel):
     class Meta:
         verbose_name = ("Dating User",)
@@ -65,6 +69,11 @@ class User(TimeBasedModel):
     )
 
     notification_sent = models.BooleanField(default=False)
+
+    referral = models.ForeignKey(Referral, null=True,
+                                 blank=True, verbose_name='referral', on_delete=models.DO_NOTHING)
+
+    # do nothing very important don't delete them you fool
 
     def __str__(self):
         return f"№{self.id} ({self.telegram_id}) - {self.name}"

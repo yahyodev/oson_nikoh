@@ -1,5 +1,5 @@
 from django.contrib import admin
-from tgbot.models import User as TelegramUser, Complaint, NecessaryLink
+from tgbot.models import User as TelegramUser, Complaint, NecessaryLink, Referral
 
 
 @admin.register(TelegramUser)
@@ -16,3 +16,11 @@ class ComplaintAdmin(admin.ModelAdmin):
 @admin.register(NecessaryLink)
 class NecessaryLinkAdmin(admin.ModelAdmin):
     list_display = ("id", "link", "title")
+
+
+@admin.register(Referral)
+class ReferralAdmin(admin.ModelAdmin):
+    list_display = ("id", "link", "link_count")
+
+    def link_count(self, obj):
+        return obj.user_set.count()

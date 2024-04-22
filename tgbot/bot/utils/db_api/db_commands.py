@@ -117,3 +117,11 @@ def get_like(profile_id: int) -> int:
 def select_all_links() -> list:
     links = NecessaryLink.objects.all().values()
     return list(links)
+
+@sync_to_async
+def referral_add(link: str, telegram_id: int) -> None:
+    Referral.objects.get_or_create(link=link)
+    referral = Referral.objects.get(link=link)
+    user = User.objects.get(telegram_id=telegram_id)
+    user.referral = referral
+    user.save()

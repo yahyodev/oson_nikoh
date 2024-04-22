@@ -1,5 +1,5 @@
 from aiogram import Router, types
-from aiogram.filters import CommandStart
+from aiogram.filters import CommandStart, CommandObject
 from aiogram.client.session.middlewares.request_logging import logger
 from aiogram.fsm.context import FSMContext
 
@@ -16,7 +16,9 @@ router = Router()
 
 
 @router.message(CommandStart())
-async def register_user(message: types.Message, state: FSMContext) -> None:
+async def register_user(message: types.Message,
+                        command: CommandObject,
+                        state: FSMContext) -> None:
     username = message.from_user.username if message.from_user.username else ""
     telegram_id = message.from_user.id
     user_exists = await db_commands.check_user_exists(telegram_id)
@@ -42,5 +44,10 @@ async def register_user(message: types.Message, state: FSMContext) -> None:
         await state.set_state(RegData.start)
     else:
         await state.clear()
+
+    args = command.args
+    if args:
+        await db_commands.referral_add(link=f"{args}",
+                                       telegram_id=message.from_user.id)
 
     await message.answer(text, reply_markup=markup)
