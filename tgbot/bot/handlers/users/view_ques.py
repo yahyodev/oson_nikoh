@@ -24,14 +24,17 @@ router = Router()
 @router.message(ChangeData.start, F.text == "1🚀")
 @router.message(SearchQues.viewing_ques, F.text == "Anketalarni ko'rish")
 async def find_ques(obj: Union[CallbackQuery, Message], state: FSMContext) -> None:
-    await update_user_data(obj.from_user.id, username=obj.from_user.username)
+    telegram_id = obj.from_user.id
+    if isinstance(obj, CallbackQuery):
+        telegram_id = obj.message.chat.id
+    await update_user_data(telegram_id, username=obj.from_user.username)
     await state.set_state(SearchQues.viewing_ques)
-    await update_user_data(obj.from_user.id, active=True)
+    await update_user_data(telegram_id, active=True)
 
     if isinstance(obj, CallbackQuery):
         obj = obj.message
 
-    user = await rand_user_list(obj.from_user.id)
+    user = await rand_user_list(telegram_id)
     if user is None:
         await obj.answer("Uzr hozirchalik sizga mos odam topilmadi,\n"
                          "Adminga yozib ko'ring")

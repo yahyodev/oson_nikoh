@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Union
 
 from aiogram import Router, types
@@ -26,18 +28,18 @@ router = Router()
 
 @router.message(RegData.start)
 @router.callback_query(RegData.start)
-async def registration(update: Union[CallbackQuery, Message], state: FSMContext) -> None:
-    message = update
-    if isinstance(update, CallbackQuery):
-        message = update.message
-
+async def registration(obj: CallbackQuery | Message, state: FSMContext) -> None:
+    message = obj.message if isinstance(obj, CallbackQuery) else obj
     user = await db_commands.select_user(message.from_user.id)
     if not user or (user and not user.status):
-        contact_keyboard = await request_contact()
-        await state.set_state(RegData.contact)
-        await message.answer("Boshlash uchun telefon nomeringiz kerak,\n"
-                             "Pastdagi tugmani bosing",
-                             reply_markup=contact_keyboard)
+        # contact_keyboard = await request_contact()
+        # await state.set_state(RegData.contact)
+        # await message.answer("Boshlash uchun telefon nomeringiz kerak,\n"
+        #                      "Pastdagi tugmani bosing",
+        #                      reply_markup=contact_keyboard)
+        await state.set_state(RegData.name)
+        await message.answer("Ismingizni ayting",
+                             reply_markup=form_btn(obj.from_user.first_name))
     else:
         ...
         await message.edit_text(

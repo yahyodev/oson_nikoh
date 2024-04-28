@@ -28,7 +28,7 @@ async def start_keyboard(
     my_profile = InlineKeyboardButton(
         text="👤Mening anketam", callback_data="my_profile"
     )
-    filters = InlineKeyboardButton(text="⚙️ Yoshga talablar", callback_data="filters")
+    # filters = InlineKeyboardButton(text="⚙️ Yoshga talablar", callback_data="filters")
     view_ques = InlineKeyboardButton(text="💌 Anketalarni ko'rish", callback_data="find_ques")
 
     if not status:
@@ -36,5 +36,5 @@ async def start_keyboard(
     else:
         markup.inline_keyboard.append([my_profile])
         markup.inline_keyboard.append([view_ques])
-        markup.inline_keyboard.append([filters])
+        # markup.inline_keyboard.append([filters])
     return markup
