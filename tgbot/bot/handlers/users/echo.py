@@ -19,6 +19,7 @@ async def echo(message: types.Message, state: FSMContext):
                                    full_name=message.from_user.full_name,
                                    username=message.from_user.username,
                                    )
+        return
 
     user = await db_commands.select_user(message.from_user.id)
     if user and user.status:

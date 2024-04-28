@@ -68,7 +68,7 @@ class User(TimeBasedModel):
         "self", through="ViewedProfile", symmetrical=False
     )
 
-    notification_sent = models.BooleanField(default=False)
+    # notification_sent = models.BooleanField(default=False)
 
     referral = models.ForeignKey(Referral, null=True,
                                  blank=True, verbose_name='referral', on_delete=models.DO_NOTHING)

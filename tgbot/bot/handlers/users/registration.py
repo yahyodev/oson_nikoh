@@ -51,7 +51,7 @@ async def registration(update: Union[CallbackQuery, Message], state: FSMContext)
 @router.message(RegData.contact, F.contact.user_id == F.from_user.id)
 async def contact(message: Message, state: FSMContext) -> None:
     await update_user_data(telegram_id=message.from_user.id,
-                           phone_number=message.text,
+                           phone_number=message.contact.phone_number,
                            )
     await state.set_state(RegData.name)
     await message.answer("Ismingizni ayting",
@@ -199,7 +199,7 @@ async def biography(message: Message, state: FSMContext) -> None:
 @router.message(RegData.min_age, F.text.isdigit())
 async def min_age(message: Message, state: FSMContext) -> None:
     if int(message.text) < 18:
-        await message.answer("Bu qonunga xilof")
+        await message.answer("Bu qonunga xilof, kattaroq yosh kiriting")
     elif int(message.text) > 99:
         await message.answer("Tu'gilgan yilini emas, yoshini kiriting\n"
                              "Masalan, 18")
@@ -226,7 +226,7 @@ async def min_age(message: Message, state: FSMContext) -> None:
 @router.message(RegData.max_age, F.text.isdigit())
 async def max_age(message: Message, state: FSMContext) -> None:
     if int(message.text) < 18:
-        await message.answer("Bu qonunga xilof")
+        await message.answer("Bu qonunga xilof, kattaroq yosh kiriting")
     elif int(message.text) > 99:
         await message.answer("Tu'gilgan yilini emas, yoshini kiriting\n"
                              "Masalan, 58")
