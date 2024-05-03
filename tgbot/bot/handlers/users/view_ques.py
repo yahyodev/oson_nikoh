@@ -27,7 +27,6 @@ async def find_ques(obj: Union[CallbackQuery, Message], state: FSMContext) -> No
     telegram_id = obj.from_user.id
     if isinstance(obj, CallbackQuery):
         telegram_id = obj.message.chat.id
-    await update_user_data(telegram_id, username=obj.from_user.username)
     await state.set_state(SearchQues.viewing_ques)
     await update_user_data(telegram_id, active=True)
 
@@ -47,6 +46,9 @@ async def find_ques(obj: Union[CallbackQuery, Message], state: FSMContext) -> No
 async def like_que(message: Message, state: FSMContext, bot: Bot) -> None:
     data = await state.get_data()
     data = data.get('last_profile_user_id')
+
+    await update_user_data(telegram_id=message.from_user.id,
+                     username=message.from_user.username)
 
     user = await db_commands.select_user(int(data))
     if user and user.is_fake:
@@ -133,6 +135,9 @@ async def go_back(message: Message, state: FSMContext) -> None:
 
 @router.callback_query(F.data.startswith("like_"))
 async def profile_liked(call: CallbackQuery, state: FSMContext, bot: Bot) -> None:
+    await update_user_data(telegram_id=call.message.from_user.id,
+                     username=call.message.from_user.username)
+
     [_, liked_id, liker_id] = call.data.split('_')
 
     user = await db_commands.select_user(liker_id)
