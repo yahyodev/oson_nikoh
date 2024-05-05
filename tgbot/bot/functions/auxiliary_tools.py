@@ -160,7 +160,8 @@ async def start_texting(call: CallbackQuery, liker_id: int, liked_id: int, bot: 
                           "💵Kasbi: {occupation}\n\n" \
                           "💢O'zi haqida: {biography}\n\n" \
                           "🔗Akkaunt uchun <a href='tg://user?id={liked_id}'>{username}</a>")
-
+    if user.phone_number:
+        user_info_template += "\nAgar ishlamasa <a href='https://t.me/{number}'>qo'shimcha ssilka</a>"
     sex_emoji = "🤵‍♂" if user.sex == 'erkak' else '👰‍♀'
     edu_emoji = "👨‍🎓" if user.sex == 'erkak' else '👩‍🎓'
     user_info = user_info_template.format(
@@ -177,7 +178,8 @@ async def start_texting(call: CallbackQuery, liker_id: int, liked_id: int, bot: 
         occupation=user.occupation,
         biography=user.biography,
         liked_id=liked_id,
-        username=('bu yerga bosing' if not user.username else '@' + user.username)
+        username=('bu yerga bosing' if not user.username else '@' + user.username),
+        number="+" + str(user.phone_number)
     )
 
     await bot.send_photo(photo=user.photo_id,

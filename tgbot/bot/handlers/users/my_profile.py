@@ -114,7 +114,7 @@ async def deactivate_que(message: Message, state: FSMContext):
     await update_user_data(telegram_id=message.from_user.id,
                            active=False)
     await message.answer("Sizning anketangiz olib tashlandi,\n"
-                         "Baxtingizni topdingiz degan umiddamiz!\n\n\n"
+                         "Endi botni o'zingizdan o'chirib yuboring\n\n\n"
                          "Anketalarni ko'rishga tugmani bosing",
                          reply_markup=form_btn("Anketalarni ko'rish"))
 

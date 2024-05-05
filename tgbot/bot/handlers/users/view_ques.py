@@ -48,7 +48,7 @@ async def like_que(message: Message, state: FSMContext, bot: Bot) -> None:
     data = data.get('last_profile_user_id')
 
     await update_user_data(telegram_id=message.from_user.id,
-                     username=message.from_user.username)
+                           username=message.from_user.username)
 
     user = await db_commands.select_user(int(data))
     if user and user.is_fake:
@@ -136,7 +136,7 @@ async def go_back(message: Message, state: FSMContext) -> None:
 @router.callback_query(F.data.startswith("like_"))
 async def profile_liked(call: CallbackQuery, state: FSMContext, bot: Bot) -> None:
     await update_user_data(telegram_id=call.message.from_user.id,
-                     username=call.message.from_user.username)
+                           username=call.message.from_user.username)
 
     [_, liked_id, liker_id] = call.data.split('_')
 
@@ -151,6 +151,8 @@ async def profile_liked(call: CallbackQuery, state: FSMContext, bot: Bot) -> Non
                           "💵Kasbi: {occupation}\n\n" \
                           "💢O'zi haqida: {biography}\n\n" \
                           "🔗Akkaunt uchun <a href='tg://user?id={liker_id}'>{username}</a>")
+    if user.phone_number:
+        user_info_template += "\nAgar ishlamasa <a href='https://t.me/{number}'>qo'shimcha ssilka</a>"
 
     sex_emoji = "🤵‍♂" if user.sex == 'erkak' else '👰‍♀'
     edu_emoji = "👨‍🎓" if user.sex == 'erkak' else '👩‍🎓'
@@ -168,7 +170,8 @@ async def profile_liked(call: CallbackQuery, state: FSMContext, bot: Bot) -> Non
         occupation=user.occupation,
         biography=user.biography,
         liker_id=liker_id,
-        username=('bu yerga bosing' if not user.username else '@' + user.username)
+        username=('bu yerga bosing' if not user.username else '@' + user.username),
+        number="+" + str(user.phone_number)
     )
 
     await call.message.edit_caption(caption=user_info[:1023], reply_markup=None)
