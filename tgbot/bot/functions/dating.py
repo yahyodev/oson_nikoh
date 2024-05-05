@@ -31,7 +31,7 @@ async def get_next_user(
         need_age_max=user.need_partner_age_max
     )
 
-    if len(user_filter) < 30:
+    if len(user_filter) < 120:
         user_filter = await db_commands.search_users(
             sex=user.sex,
             age=user.age,
@@ -40,7 +40,7 @@ async def get_next_user(
             need_age_max=user.need_partner_age_max
         )
 
-    if len(user_filter) < 30:
+    if len(user_filter) < 120:
         user_filter = await db_commands.search_users(
             sex=user.sex,
             telegram_id=user.telegram_id,
