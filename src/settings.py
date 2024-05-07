@@ -29,6 +29,9 @@ ALLOWED_HOSTS = ['194.26.232.42', '0.0.0.0',
 # Application definition
 
 INSTALLED_APPS = [
+    'admin_tools_stats',  # this must be BEFORE 'admin_tools' and 'django.contrib.admin'
+    'django_nvd3',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -120,3 +123,11 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
+        'LOCATION': '127.0.0.1:11211',
+    }
+}

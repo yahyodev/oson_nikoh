@@ -18,5 +18,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('tools/', include('admin_tools_stats.urls')),
     path('', include('tgbot.urls')),
 ]
