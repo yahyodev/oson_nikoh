@@ -51,17 +51,21 @@ async def like_que(message: Message, state: FSMContext, bot: Bot) -> None:
                            username=message.from_user.username)
 
     user = await db_commands.select_user(int(data))
-    if user and user.is_fake:
-        user_info_template = ("💸Bizga sodiq bo'lganiz uchun "
-                              "bu bonus akkaunt\n\n"
-                              "{sex_emoji}{name}, {age}, {location}, \n\n" \
-                              "📊{height} sm - {weight} kg\n\n" \
-                              "🇺🇳Millati: {ethnicity}\n\n" \
-                              "👨‍👩‍👧‍👦Oilaviy holati: {marital_status}\n\n" \
-                              "{edu_emoji}Ma'lumoti: {education}\n\n" \
-                              "💵Kasbi: {occupation}\n\n" \
-                              "💢O'zi haqida: {biography}\n\n" \
-                              "🔗Akkaunt uchun <a href='tg://user?id={liked_id}'>{username}</a>")
+    real_user = await db_commands.select_user(telegram_id=message.from_user.id)
+
+    if user and user.is_fake or real_user.premium:
+        first_sentence = "💸Bizga sodiq bo'lganiz uchun " \
+                         "bu bonus akkaunt\n\n" if user.is_fake else "💵Premium bo'lganiz uchun bu sizga bu anketa\n\n"
+        user_info_template = (
+                first_sentence +
+                "{sex_emoji}{name}, {age}, {location}, \n\n" \
+                "📊{height} sm - {weight} kg\n\n" \
+                "🇺🇳Millati: {ethnicity}\n\n" \
+                "👨‍👩‍👧‍👦Oilaviy holati: {marital_status}\n\n" \
+                "{edu_emoji}Ma'lumoti: {education}\n\n" \
+                "💵Kasbi: {occupation}\n\n" \
+                "💢O'zi haqida: {biography}\n\n" \
+                "🔗Akkaunt uchun <a href='tg://user?id={liked_id}'>{username}</a>")
 
         sex_emoji = "🤵‍♂" if user.sex == 'erkak' else '👰‍♀'
         edu_emoji = "👨‍🎓" if user.sex == 'erkak' else '👩‍🎓'

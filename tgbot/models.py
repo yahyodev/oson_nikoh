@@ -34,6 +34,7 @@ class User(TimeBasedModel):
     status = models.BooleanField(default=False, verbose_name='status')
     is_fake = models.BooleanField(default=False, verbose_name='is fake')
     active = models.BooleanField(default=True, verbose_name='active')
+    premium = models.BooleanField(default=False, verbose_name='premium')
     full_name = models.CharField(max_length=255, verbose_name="full name", null=True, blank=True)
 
     phone_number = models.BigIntegerField(
