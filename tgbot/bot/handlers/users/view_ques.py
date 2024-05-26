@@ -5,7 +5,11 @@ from aiogram import Router, F, Bot
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
 
-from tgbot.bot.functions.auxiliary_tools import profile_choices, send_profile, start_texting
+from tgbot.bot.functions.auxiliary_tools import (
+    profile_choices,
+    send_profile,
+    start_texting,
+    send_profile_premium)
 from tgbot.bot.functions.dating import rand_user_list, create_que
 from tgbot.bot.loader import bot
 from django.conf import settings
@@ -90,6 +94,8 @@ async def like_que(message: Message, state: FSMContext, bot: Bot) -> None:
         else:
             await message.answer_photo(caption=user_info[:1023],
                                        photo=user.photo_id)
+        if real_user.premium:
+            await send_profile_premium(message, data, bot)
 
         await asyncio.sleep(3)
     else:

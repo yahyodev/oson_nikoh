@@ -30,7 +30,6 @@ async def start_keyboard(
     )
     # filters = InlineKeyboardButton(text="⚙️ Yoshga talablar", callback_data="filters")
     view_ques = InlineKeyboardButton(text="💌 Anketalarni ko'rish", callback_data="find_ques")
-
     if not status:
         markup.inline_keyboard.append([registration])
     else:

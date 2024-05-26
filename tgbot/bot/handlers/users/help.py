@@ -8,5 +8,5 @@ router = Router()
 async def bot_help(message: types.Message):
     text = ("Buyruqlar: ",
             "/start - Botni ishga tushirish",
-            "/help - Yordam")
+            "/help - Yordam", "Admin: @oson_nikoh_admin")
     await message.answer(text="\n".join(text))

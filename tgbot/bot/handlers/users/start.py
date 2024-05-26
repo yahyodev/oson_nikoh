@@ -21,6 +21,7 @@ async def register_user(message: types.Message,
                         state: FSMContext) -> None:
     username = message.from_user.username if message.from_user.username else ""
     telegram_id = message.from_user.id
+    full_name = message.from_user.full_name
     user_exists = await db_commands.check_user_exists(telegram_id)
     markup = await start_keyboard(message)
     text = "👋Assalomu aleykum, {full_name}\n\n" \
@@ -34,6 +35,22 @@ async def register_user(message: types.Message,
                                    full_name=message.from_user.full_name,
                                    username=message.from_user.username,
                                    )
+        args = command.args
+        if args:
+            await db_commands.referral_add(link=f"{args}",
+                                           telegram_id=message.from_user.id)
+            ref_link = int(args)
+            users = await db_commands.get_all_users()
+            count = await db_commands.filter_referral(args)
+            print(ref_link, users, count)
+            if ref_link in users:
+                if count < 5:
+                    await bot.send_message(int(args), f"Sizni ssilkezdan {full_name} {count}chi bo'lib qo'shildi\n" \
+                                           "🎁5ta odamga yetganda VIP ya'ni premium olasiz")
+                if count >= 5:
+                    await bot.send_message(int(args), f"Sizni ssilkezdan {full_name} {count}chi bo'lib qo'shildi\n" \
+                                           "💵Siz VIP tarifiga qo'shildiz, endi xohlagan odamizni akkauntini srazu olasiz")
+                    await update_user_data(int(args), premium=True)
     else:
         status = status or (await db_commands.select_user(message.from_user.id)).status
         await update_user_data(telegram_id=telegram_id,
@@ -44,10 +61,5 @@ async def register_user(message: types.Message,
         await state.set_state(RegData.start)
     else:
         await state.clear()
-
-    args = command.args
-    if args:
-        await db_commands.referral_add(link=f"{args}",
-                                       telegram_id=message.from_user.id)
 
     await message.answer(text, reply_markup=markup)

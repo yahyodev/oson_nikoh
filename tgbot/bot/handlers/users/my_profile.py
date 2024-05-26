@@ -6,6 +6,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, KeyboardButton, ReplyKeyboardMarkup, Message
 from aiogram.filters import Command
 
+from tgbot.bot.keyboards.inline import start_keyboard
 from tgbot.bot.states import ChangeData, RegData, SearchQues
 from tgbot.bot.functions.auxiliary_tools import display_profile, profile_choices
 from tgbot.bot.keyboards.builders import form_btn
@@ -26,13 +27,6 @@ async def change_que_completely(message: Message, state: FSMContext):
     await state.set_state(RegData.name)
 
 
-@router.message(F.text == '3', ChangeData.start)
-async def change_bio(message: Message, state: FSMContext):
-    await state.set_state(ChangeData.biography)
-    await message.answer("O'zingiz haqida bo'lgan boshqa ma'lumotlarni ayting\n"
-                         "xohlasangiz talablaringizni ham yozing")
-
-
 @router.message(ChangeData.biography, F.text)
 async def biography(message: Message, state: FSMContext) -> None:
     await state.clear()
@@ -48,6 +42,13 @@ async def change_photo(message: Message, state: FSMContext):
     await state.set_state(ChangeData.photo)
     await message.answer("Foto yuboring, birovnikini qo'ymang,\n"
                          "buni boshqa foydalanuvchilar ko'ra oladi")
+
+
+@router.message(F.text == '5')
+async def change_photo(message: Message, state: FSMContext):
+    await update_user_data(telegram_id=message.from_user.id, active=False)
+    await message.answer(
+        "Anketangiz o'chirildi, endi botni o'chirib yuboring, yoki /start bosib qayta jufti halolizni qidiring.")
 
 
 @router.message(ChangeData.photo, F.photo)
@@ -86,8 +87,9 @@ async def my_profile(obj: Union[Message, CallbackQuery], state: FSMContext):
 
     text = "1. Anketalarni ko'rish\n" \
            "2. Anketamni qayta boshidan to'ldirib chiqish\n" \
-           "3. O'zim haqidagi ma'lumotni o'zgartirish\n" \
-           "4. Fotoni o'zgartirish"
+           "3. 💸Referral ssilka - 5 ta odam qo'shing VIP oling\n" \
+           "4. Fotoni o'zgartirish\n" \
+           "5. Anketamni o'chirib qo'yish"
 
     kb = [
         [
@@ -95,6 +97,7 @@ async def my_profile(obj: Union[Message, CallbackQuery], state: FSMContext):
             KeyboardButton(text="2"),
             KeyboardButton(text="3"),
             KeyboardButton(text="4"),
+            KeyboardButton(text="5"),
         ],
     ]
 
@@ -118,6 +121,14 @@ async def deactivate_que(message: Message, state: FSMContext):
                          "Anketalarni ko'rishga tugmani bosing",
                          reply_markup=form_btn("Anketalarni ko'rish"))
 
+
+@router.message(Command(commands=['my_referral']))
+@router.message(F.text == '3', ChangeData.start)
+async def get_referral(message: Message):
+    ref = "https://t.me/oson_nikoh_bot?start=" + str(message.from_user.id)
+    await message.answer(f"🔗Sizning referral ssilkez:\n {ref}\n\n" \
+                         "🎁5 tadan ko'proq odam qo'shilsa sizga VIP beriladi",
+                         reply_markup=(await start_keyboard(message)))
 
 # @router.message(SearchQues.profile_options, F.text == '5')
 # async def filters(message: Message, state: FSMContext):

@@ -118,6 +118,7 @@ def select_all_links() -> list:
     links = NecessaryLink.objects.all().values()
     return list(links)
 
+
 @sync_to_async
 def referral_add(link: str, telegram_id: int) -> None:
     Referral.objects.get_or_create(link=link)
@@ -125,3 +126,15 @@ def referral_add(link: str, telegram_id: int) -> None:
     user = User.objects.get(telegram_id=telegram_id)
     user.referral = referral
     user.save()
+
+
+@sync_to_async
+def filter_referral(telegram_id: int) -> int:
+    count = User.objects.filter(referral__link=str(telegram_id)).count()
+    return count
+
+
+@sync_to_async
+def get_all_users() -> List[int]:
+    users = User.objects.values_list('telegram_id', flat=True)
+    return list(users)

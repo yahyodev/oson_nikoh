@@ -5,6 +5,7 @@ from aiogram import Bot
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup, Message, KeyboardButton, ReplyKeyboardMarkup, Update, \
     InlineKeyboardButton
 
+from tgbot.bot.keyboards.inline import start_keyboard
 from tgbot.bot.utils.db_api import db_commands
 
 
@@ -57,7 +58,7 @@ async def profile_choices(obj: Union[CallbackQuery, Message]):
     text = "1. Anketalarni ko'rish\n" \
            "2. Anketamni butunlay yoki qisman o'zgartirish\n" \
            "3. Anketamni olib tashlash\n" \
-           "4. Mening anketam"
+           "4. Mening anketam\n" \
 
     if isinstance(obj, CallbackQuery):
         obj = obj.message
@@ -137,6 +138,59 @@ async def send_profile(obj: Message, telegram_id: int, bot: Bot) -> None:
                          )
 
 
+async def send_profile_premium(obj: Message, telegram_id: int, bot: Bot) -> None:
+    """Function for displaying the user profile."""
+    # await asyncio.sleep(0.1)
+
+    user = await db_commands.select_user(obj.from_user.id)
+
+    user_info_template = ("👀Sizga VIP foydalanuvchi qiziqdi:\n\n"
+                          "{sex_emoji}{name}, {age}, {location}, \n\n" \
+                          "📊{height} sm - {weight} kg\n\n" \
+                          "🇺🇳Millati: {ethnicity}\n\n" \
+                          "👨‍👩‍👧‍👦Oilaviy holati: {marital_status}\n\n" \
+                          "{edu_emoji}Ma'lumoti: {education}\n\n" \
+                          "💵Kasbi: {occupation}\n\n" \
+                          "{sex_emoji_2}{partner}ni yosh chegarasi: {min_age}-{max_age}\n\n" \
+                          "💢O'zi haqida va talablari: {biography}\n\n" \
+                          "🔗Akkaunt uchun <a href='tg://user?id={liked_id}'>{username}</a>")
+
+    if user.phone_number and not user.username:
+        user_info_template += "\nAgar ishlamasa <a href='https://t.me/{number}'>qo'shimcha ssilka</a>"
+
+    sex_emoji = "🤵‍♂" if user.sex == 'erkak' else '👰‍♀'
+    edu_emoji = "👨‍🎓" if user.sex == 'erkak' else '👩‍🎓'
+    sex_emoji_2 = '🤵‍♂' if user.sex == 'ayol' else "👰‍♀"
+    partner = "kelin" if user.sex == 'erkak' else 'kuyov'
+    user_info = user_info_template.format(
+        sex_emoji=sex_emoji,
+        edu_emoji=edu_emoji,
+        name=user.name,
+        age=user.age,
+        location=user.location,
+        height=user.height,
+        weight=user.weight,
+        ethnicity=user.ethnicity,
+        marital_status=user.marital_status,
+        education=user.education,
+        occupation=user.occupation,
+        biography=user.biography,
+        partner=partner.capitalize(),
+        min_age=user.need_partner_age_min,
+        max_age=user.need_partner_age_max,
+        sex_emoji_2=sex_emoji_2,
+        liked_id=telegram_id,
+        username=('bu yerga bosing' if not user.username else '@' + user.username),
+        number="+" + str(user.phone_number)
+    )
+
+    await bot.send_photo(chat_id=telegram_id,
+                         caption=user_info[:1023],
+                         photo=user.photo_id,
+                         reply_markup=(await start_keyboard(telegram_id))
+                         )
+
+
 # async def start_texting(liked_id: int, liker_id: int, bot: Bot):
 #     from aiogram import types
 #     liker = await db_commands.select_user(liker_id)
@@ -160,7 +214,7 @@ async def start_texting(call: CallbackQuery, liker_id: int, liked_id: int, bot: 
                           "💵Kasbi: {occupation}\n\n" \
                           "💢O'zi haqida: {biography}\n\n" \
                           "🔗Akkaunt uchun <a href='tg://user?id={liked_id}'>{username}</a>")
-    if user.phone_number:
+    if user.phone_number and not user.username:
         user_info_template += "\nAgar ishlamasa <a href='https://t.me/{number}'>qo'shimcha ssilka</a>"
     sex_emoji = "🤵‍♂" if user.sex == 'erkak' else '👰‍♀'
     edu_emoji = "👨‍🎓" if user.sex == 'erkak' else '👩‍🎓'
