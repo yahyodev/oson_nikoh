@@ -36,4 +36,4 @@ async def newsletter(message: types.Message):
                 await update_user_data(active=False)
                 await bot.send_message(message.from_user.id, f"Unsuccessful newsletter {user}")
 
-            await asyncio.sleep(0.09)
+            await asyncio.sleep(0.1)
