@@ -31,7 +31,7 @@ class CheckSubscriberMiddleware(BaseMiddleware):
                     subscribed_links.add(link["telegram_link_id"])
             text, markup = (
                 "Siz barcha kanallarga obuna bo'lmagansiz! Botdan foydalanishni davom ettirish uchun "
-                "obuna bo'ling! Quyidagi havolalar: "
+                "obuna bo'ling! \n\n Obunadan keyin qayta /start tugmasini bosing"
             ), await necessary_links_keyboard(
                 telegram_id=user_id,
                 links_db=links_db,
